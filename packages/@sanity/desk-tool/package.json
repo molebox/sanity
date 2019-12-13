@@ -20,6 +20,7 @@
     "sanity-tool"
   ],
   "dependencies": {
+    "@reach/auto-id": "^0.7.2",
     "@sanity/data-aspects": "0.147.0",
     "@sanity/form-builder": "0.147.9",
     "@sanity/generate-help-url": "0.147.0",
