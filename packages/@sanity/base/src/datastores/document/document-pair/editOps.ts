@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {combineLatest, concat, of} from 'rxjs'
-import {map, switchMap} from 'rxjs/operators'
+import {map, switchMap, refCount, publishReplay} from 'rxjs/operators'
 import schema from 'part:@sanity/base/schema'
 import {snapshotPair} from './snapshotPair'
 import {IdPair, OperationArgs} from '../types'
 import * as operations from './operations'
+import {createObservableCache} from '../utils/createObservableCache'
 
 const GUARDED = createOperationsAPI((op, opName) => {
   return {
@@ -12,6 +13,7 @@ const GUARDED = createOperationsAPI((op, opName) => {
     execute: createOperationGuard(opName)
   }
 })
+const cacheOn = createObservableCache<any>()
 
 export function editOpsOf(idPair: IdPair, typeName: string) {
   const schemaType = schema.get(typeName)
@@ -43,7 +45,7 @@ export function editOpsOf(idPair: IdPair, typeName: string) {
         })
       })
     )
-  )
+  ).pipe(publishReplay(1), refCount(), cacheOn(idPair.publishedId))
 }
 
 function createOperationsAPI(cb) {

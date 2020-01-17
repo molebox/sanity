@@ -1,6 +1,6 @@
 import documentStore from 'part:@sanity/base/datastore/document'
 import {toObservable, useObservable} from './utils/use-observable'
-import {filter, mapTo, switchMap} from 'rxjs/operators'
+import {filter, mapTo, switchMap, distinctUntilChanged} from 'rxjs/operators'
 import {merge, Observable} from 'rxjs'
 
 interface SyncState {
@@ -27,7 +27,8 @@ export function useConnectionState(publishedId, typeName): SyncState {
             )
             return merge(connected$, disconnected$)
           }
-        )
+        ),
+        distinctUntilChanged()
       )
     ),
     DISCONNECTED
