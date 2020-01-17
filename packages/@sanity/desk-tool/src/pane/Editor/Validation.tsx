@@ -1,21 +1,15 @@
-/* eslint-disable react/no-multi-comp */
 import React from 'react'
 import {Tooltip} from 'react-tippy'
 import Button from 'part:@sanity/components/buttons/default'
 import ValidationList from 'part:@sanity/components/validation/list'
 import ChevronDown from 'part:@sanity/base/chevron-down-icon'
 import WarningIcon from 'part:@sanity/base/warning-icon'
-
-interface Marker {
-  level: string
-  type: string
-}
+import {useValidationStatus} from '@sanity/react-hooks'
 
 interface ErrorProps {
   id: string
   type: string
   onCloseValidationResults: () => void
-  markers: Marker[]
   onFocus: (path: any) => void
   onToggleValidationResults: () => void
   showValidationTooltip: boolean
@@ -27,9 +21,9 @@ export function Validation(props: ErrorProps) {
     onFocus,
     onToggleValidationResults,
     showValidationTooltip,
-    type,
-    markers
+    type
   } = props
+  const {markers} = useValidationStatus(props.id, props.type)
   const validation = markers.filter(marker => marker.type === 'validation')
   const errors = validation.filter(marker => marker.level === 'error')
   const warnings = validation.filter(marker => marker.level === 'warning')

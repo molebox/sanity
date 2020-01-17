@@ -63,11 +63,6 @@ interface Doc {
   _updatedAt: string
 }
 
-interface Marker {
-  level: string
-  type: string
-}
-
 interface HistoricalDocumentState {
   isLoading: boolean
   snapshot: null | Doc
@@ -125,7 +120,6 @@ interface Props {
   published: null | Doc
   draft: null | Doc
   value: null | Doc
-  markers: Marker[]
   isLoading: boolean
   isConnected: boolean
   isSelected: boolean
@@ -651,8 +645,7 @@ export default class DocumentPane extends React.PureComponent<Props, State> {
   }
 
   renderActions = () => {
-    const {options, markers} = this.props
-    // const schemaType = schema.get(options.type)
+    const {options} = this.props
     const {showValidationTooltip} = this.state
     if (this.historyIsOpen()) {
       return null
@@ -664,7 +657,6 @@ export default class DocumentPane extends React.PureComponent<Props, State> {
         <Validation
           id={options.id}
           type={options.type}
-          markers={markers}
           showValidationTooltip={showValidationTooltip}
           onCloseValidationResults={this.handleCloseValidationResults}
           onToggleValidationResults={this.handleToggleValidationResults}

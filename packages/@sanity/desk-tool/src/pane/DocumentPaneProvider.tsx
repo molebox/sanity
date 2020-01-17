@@ -2,12 +2,7 @@ import * as React from 'react'
 import DocumentPane from './DocumentPane'
 import withInitialValue from '../utils/withInitialValue'
 import {throttle} from 'lodash'
-import {
-  useConnectionState,
-  useDocumentOperation,
-  useEditState,
-  useValidationStatus
-} from '@sanity/react-hooks'
+import {useConnectionState, useDocumentOperation, useEditState} from '@sanity/react-hooks'
 
 interface Props {
   title?: string
@@ -51,7 +46,6 @@ export const DocumentPaneProvider = withInitialValue((props: Props) => {
   const {patch, commit}: any = useDocumentOperation(props.options.id, props.options.type)
   const editState: any = useEditState(props.options.id, props.options.type)
   const {isConnected} = useConnectionState(props.options.id, props.options.type)
-  const validationStatus: any = useValidationStatus(props.options.id, props.options.type)
 
   const runThrottled = useThrottled(run => run(), 1000, {leading: true, trailing: true}, [])
 
@@ -67,7 +61,6 @@ export const DocumentPaneProvider = withInitialValue((props: Props) => {
       value={value}
       draft={editState && editState.draft}
       published={editState && editState.published}
-      markers={validationStatus.markers}
       isLoading={!editState}
     />
   )
