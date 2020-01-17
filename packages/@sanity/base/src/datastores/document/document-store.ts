@@ -7,6 +7,7 @@ import {listenQuery} from './listenQuery'
 import {editStateOf} from './document-pair/editState'
 import {editOpsOf} from './document-pair/editOps'
 import {documentEventsFor} from './document-pair/documentEvents'
+import {validationFor} from './document-pair/validation'
 
 function getIdPairFromPublished(publishedId: string): IdPair {
   if (isDraftId(publishedId)) {
@@ -27,6 +28,7 @@ export default {
       editStateOf(getIdPairFromPublished(publishedId), type),
     editOpsOf: (publishedId: string, type) => editOpsOf(getIdPairFromPublished(publishedId), type),
     documentEventsFor: (publishedId: string) =>
-      documentEventsFor(getIdPairFromPublished(publishedId))
+      documentEventsFor(getIdPairFromPublished(publishedId)),
+    validationFor: (publishedId: string, typeName: string) => validationFor(publishedId, typeName)
   }
 }
