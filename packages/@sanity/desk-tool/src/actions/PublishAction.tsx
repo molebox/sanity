@@ -20,7 +20,7 @@ export function PublishAction(props) {
 
   const validationStatus = useValidationStatus(id, type)
 
-  const hasValidationErrors = validationStatus.errors.length > 0
+  const hasValidationErrors = validationStatus.markers.length > 0
 
   const title = publish.disabled
     ? publish.disabled

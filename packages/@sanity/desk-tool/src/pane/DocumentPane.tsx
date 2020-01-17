@@ -23,12 +23,13 @@ import windowWidth$ from '../utils/windowWidth'
 import History from './History'
 import _documentPaneStyles from './styles/DocumentPane.css'
 import FormView from './Editor/FormView'
-import Actions from './Editor/Actions'
 import {historyIsEnabled} from './Editor/history'
 import {getMenuItems, getProductionPreviewItem} from './documentPaneMenuItems'
-import {validateDocument} from '@sanity/validation'
 import {PaneRouterContext} from '..'
 import {DocumentActionShortcuts} from '../components/DocumentActionShortcuts'
+import styles from './styles/Editor.css'
+import {Validation} from './Editor/Validation'
+import LanguageFilter from 'part:@sanity/desk-tool/language-select-component?'
 
 declare const __DEV__: boolean
 
@@ -127,7 +128,6 @@ interface Props {
   markers: Marker[]
   isLoading: boolean
   isConnected: boolean
-  isSyncing: boolean
   isSelected: boolean
   isCollapsed: boolean
   onChange: (patches: any[]) => void
@@ -189,25 +189,6 @@ export default class DocumentPane extends React.PureComponent<Props, State> {
         this.handleCloseHistory(context)
       }
     }
-  }
-
-  validateDocument = async () => {
-    const {draft, published} = this.props
-    const doc = draft || published
-    if (!doc || !doc._type) {
-      return []
-    }
-
-    const type = schema.get(doc._type)
-    if (!type) {
-      // eslint-disable-next-line no-console
-      console.warn('Schema for document type "%s" not found, skipping validation')
-      return []
-    }
-
-    const markers = await validateDocument(doc, schema)
-    this.setStateIfMounted({markers, validationPending: false})
-    return markers
   }
 
   getActiveViewId() {
@@ -670,24 +651,26 @@ export default class DocumentPane extends React.PureComponent<Props, State> {
   }
 
   renderActions = () => {
-    const {value, markers} = this.props
-    const typeName = this.props.options.type
-    const schemaType = schema.get(typeName)
+    const {options, markers} = this.props
+    // const schemaType = schema.get(options.type)
     const {showValidationTooltip} = this.state
     if (this.historyIsOpen()) {
       return null
     }
 
     return (
-      <Actions
-        value={value}
-        markers={markers}
-        type={schemaType}
-        showValidationTooltip={showValidationTooltip}
-        onCloseValidationResults={this.handleCloseValidationResults}
-        onToggleValidationResults={this.handleToggleValidationResults}
-        onFocus={this.handleSetFocus}
-      />
+      <div className={styles.paneFunctions}>
+        {LanguageFilter && <LanguageFilter />}
+        <Validation
+          id={options.id}
+          type={options.type}
+          markers={markers}
+          showValidationTooltip={showValidationTooltip}
+          onCloseValidationResults={this.handleCloseValidationResults}
+          onToggleValidationResults={this.handleToggleValidationResults}
+          onFocus={this.handleSetFocus}
+        />
+      </div>
     )
   }
 

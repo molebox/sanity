@@ -1,10 +1,13 @@
 import * as React from 'react'
-import {useDocumentOperation} from '@sanity/react-hooks'
-import {useEditState} from '@sanity/react-hooks'
 import DocumentPane from './DocumentPane'
 import withInitialValue from '../utils/withInitialValue'
 import {throttle} from 'lodash'
-import {useValidationStatus, useConnectionState, useSyncState} from '@sanity/react-hooks'
+import {
+  useConnectionState,
+  useDocumentOperation,
+  useEditState,
+  useValidationStatus
+} from '@sanity/react-hooks'
 
 interface Props {
   title?: string
@@ -48,7 +51,6 @@ export const DocumentPaneProvider = withInitialValue((props: Props) => {
   const {patch, commit}: any = useDocumentOperation(props.options.id, props.options.type)
   const editState: any = useEditState(props.options.id, props.options.type)
   const {isConnected} = useConnectionState(props.options.id, props.options.type)
-  const {isSyncing} = useSyncState(props.options.id, props.options.type)
   const validationStatus: any = useValidationStatus(props.options.id, props.options.type)
 
   const runThrottled = useThrottled(run => run(), 1000, {leading: true, trailing: true}, [])
@@ -62,11 +64,10 @@ export const DocumentPaneProvider = withInitialValue((props: Props) => {
         runThrottled(commit.execute)
       }}
       isConnected={isConnected}
-      isSyncing={isSyncing}
       value={value}
       draft={editState && editState.draft}
       published={editState && editState.published}
-      markers={validationStatus.isValidating ? [] : validationStatus.errors}
+      markers={validationStatus.markers}
       isLoading={!editState}
     />
   )
